@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RemajaSehat - Edukasi Kesehatan Remaja</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { 
+            font-family: 'Inter', sans-serif;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        .transition-all {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #0d9488 0%, #059669 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 10s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .nav-link-custom {
+            position: relative;
+        }
+        
+        .nav-link-custom::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: #0d9488;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav-link-custom:hover::after {
+            width: 100%;
+        }
+        
+        .material-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .material-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 30px -12px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* ===== TOMBOL BACK TO TOP ===== */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: #0d9488;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(13, 148, 136, 0.3);
+            z-index: 1000;
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background: #0f766e;
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4);
+        }
+        
+        /* ===== LOADING SCREEN ===== */
+        .loader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #0d9488;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* ===== TOAST NOTIFICATION ===== */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            background: #0d9488;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* ===== TYPING EFFECT ===== */
+        .typing-text {
+            border-right: 3px solid white;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 3s steps(30, end), blink 0.75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        @keyframes blink {
+            from, to { border-color: transparent; }
+            50% { border-color: white; }
+        }
+        
+        /* ===== PARTICLE BACKGROUND ===== */
+        .particle {
+            position: absolute;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 8s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* ===== SMOOTH SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #0d9488;
+            border-radius: 10px;
+        }
+        
+        /* ===== GLASS MORPHISM EFFECT ===== */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* ===== HOVER GLOW EFFECT ===== */
+        .glow-hover:hover {
+            box-shadow: 0 0 20px rgba(13, 148, 136, 0.4);
+        }
+        
+        /* ===== MENU HAMBURGER ===== */
+        .hamburger {
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+        }
+        
+        .hamburger span {
+            display: block;
+            width: 28px;
+            height: 3px;
+            background-color: #0d9488;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            transform: scale(0);
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+        
+        .mobile-menu-slide {
+            animation: slideDown 0.3s ease forwards;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* ===== COUNTER ANIMATION ===== */
+        .counter-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #0d9488;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADING SCREEN -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader"></div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle mr-2"></i> <span id="toastMessage">Selamat datang!</span>
+    </div>
+
+    <!-- BACK TO TOP BUTTON -->
+    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- ==================== HEADER ==================== -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3 group cursor-pointer" onclick="showHomepage()">
+                    <div class="w-10 h-10 bg-teal-600 rounded-full flex items-center justify-center transition-all group-hover:scale-110 group-hover:rotate-12">
+                        <i class="fas fa-leaf text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-teal-700">RemajaSehat</h1>
+                        <p class="text-xs text-gray-500">Edukasi Kesehatan Remaja</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex gap-8">
+                    <a href="#" onclick="showHomepage()" class="nav-link-custom text-gray-700 hover:text-teal-600 font-medium">Beranda</a>
+                    <a href="#" onclick="showMateri()" class="nav-link-custom text-gray-700 hover:text-teal-600 font-medium">Materi</a>
+                    <a href="#" onclick="showQuiz()" class="nav-link-custom text-gray-700 hover:text-teal-600 font-medium">Kuis</a>
+                    <a href="#" onclick="showBMI()" class="nav-link-custom text-gray-700 hover:text-teal-600 font-medium">Kalkulator BMI</a>
+                    <a href="#" onclick="showAbout()" class="nav-link-custom text-gray-700 hover:text-teal-600 font-medium">Tentang</a>
+                </div>
+                <button id="mobileMenuBtn" class="hamburger md:hidden" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t py-4 px-4 flex flex-col gap-3 shadow-lg">
+            <a href="#" onclick="showHomepage(); closeMenu()" class="text-gray-700 hover:text-teal-600 hover:bg-teal-50 px-3 py-2 rounded-lg transition-all">🏠 Beranda</a>
+            <a href="#" onclick="showMateri(); closeMenu()" class="text-gray-700 hover:text-teal-600 hover:bg-teal-50 px-3 py-2 rounded-lg transition-all">📚 Materi</a>
+            <a href="#" onclick="showQuiz(); closeMenu()" class="text-gray-700 hover:text-teal-600 hover:bg-teal-50 px-3 py-2 rounded-lg transition-all">❓ Kuis</a>
+            <a href="#" onclick="showBMI(); closeMenu()" class="text-gray-700 hover:text-teal-600 hover:bg-teal-50 px-3 py-2 rounded-lg transition-all">🩺 Kalkulator BMI</a>
+            <a href="#" onclick="showAbout(); closeMenu()" class="text-gray-700 hover:text-teal-600 hover:bg-teal-50 px-3 py-2 rounded-lg transition-all">ℹ️ Tentang</a>
+        </div>
+    </header>
+
+    <!-- ==================== HOMEPAGE ==================== -->
+    <div id="homepage">
+        <section class="hero-gradient text-white py-20 relative overflow-hidden">
+            <!-- Particle Background -->
+            <div id="particles"></div>
+            
+            <div class="container mx-auto px-4 text-center relative z-10">
+                <div class="inline-block bg-white/20 rounded-full px-8 py-3 text-2xl md:text-3xl font-bold mb-6 tracking-wide backdrop-blur-sm transition-all hover:scale-105">
+                    STIKES KARYA HUSADA KEDIRI
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-4">
+                    Sehat Fisik & Mental,<br>Remaja Pasti Bisa!
+                </h1>
+                <p class="text-xl md:text-2xl mb-6 opacity-90 max-w-2xl mx-auto leading-relaxed typing-text inline-block">
+                    Website edukasi kesehatan untuk remaja usia 13-19 tahun
+                </p>
+                <p class="text-lg mb-8 opacity-90 max-w-2xl mx-auto font-medium tracking-wide">
+                    Farida Hayati • Kharisma Jihan Fadhilah • Habib Ardiansa
+                </p>
+                <button onclick="showMateri()" class="bg-white text-teal-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all shadow-lg hover:shadow-2xl hover:scale-105 glow-hover">
+                    Mulai Belajar →
+                </button>
+            </div>
+        </section>
+        
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Fitur Unggulan</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="text-center p-6 rounded-xl bg-gray-50 hover:shadow-lg transition-all cursor-pointer group" onclick="showMateri()">
+                        <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4 transition-all group-hover:scale-110 group-hover:bg-teal-200">
+                            <i class="fas fa-graduation-cap text-teal-600 text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">Materi Edukasi</h3>
+                        <p class="text-gray-500 text-sm">Belajar kesehatan remaja lengkap</p>
+                    </div>
+                    <div class="text-center p-6 rounded-xl bg-gray-50 hover:shadow-lg transition-all cursor-pointer group" onclick="showQuiz()">
+                        <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4 transition-all group-hover:scale-110 group-hover:bg-teal-200">
+                            <i class="fas fa-brain text-teal-600 text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">Kuis Interaktif</h3>
+                        <p class="text-gray-500 text-sm">Cek pemahamanmu</p>
+                    </div>
+                    <div class="text-center p-6 rounded-xl bg-gray-50 hover:shadow-lg transition-all cursor-pointer group" onclick="showBMI()">
+                        <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4 transition-all group-hover:scale-110 group-hover:bg-teal-200">
+                            <i class="fas fa-calculator text-teal-600 text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">Kalkulator BMI</h3>
+                        <p class="text-gray-500 text-sm">Cek status gizi tubuhmu</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Topik Materi</h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-md material-card cursor-pointer group" onclick="showMateri()">
+                        <div class="h-48 bg-gradient-to-r from-teal-400 to-teal-500 flex items-center justify-center overflow-hidden">
+                            <i class="fas fa-apple-alt text-white text-6xl transition-all group-hover:scale-110 group-hover:rotate-12"></i>
+                        </div>
+                        <div class="p-6">
+                            <span class="text-xs text-teal-600 font-semibold">Gizi</span>
+                            <h3 class="text-xl font-bold mt-2 mb-3">Pola Makan Seimbang</h3>
+                            <p class="text-gray-500 text-sm">Kemenkes RI • 4-5 golongan makanan</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-md material-card cursor-pointer group" onclick="showMateri()">
+                        <div class="h-48 bg-gradient-to-r from-emerald-400 to-emerald-500 flex items-center justify-center overflow-hidden">
+                            <i class="fas fa-running text-white text-6xl transition-all group-hover:scale-110 group-hover:rotate-12"></i>
+                        </div>
+                        <div class="p-6">
+                            <span class="text-xs text-teal-600 font-semibold">Aktivitas Fisik</span>
+                            <h3 class="text-xl font-bold mt-2 mb-3">Gerak 60 Menit/Hari</h3>
+                            <p class="text-gray-500 text-sm">WHO • Intensitas sedang-berat</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-md material-card cursor-pointer group" onclick="showMateri()">
+                        <div class="h-48 bg-gradient-to-r from-cyan-400 to-cyan-500 flex items-center justify-center overflow-hidden">
+                            <i class="fas fa-brain text-white text-6xl transition-all group-hover:scale-110 group-hover:rotate-12"></i>
+                        </div>
+                        <div class="p-6">
+                            <span class="text-xs text-teal-600 font-semibold">Health Promotion Model</span>
+                            <h3 class="text-xl font-bold mt-2 mb-3">Nola J. Pender</h3>
+                            <p class="text-gray-500 text-sm">Persepsi • Dukungan • Komitmen</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer class="bg-gray-900 text-white py-12">
+            <div class="container mx-auto px-4 text-center">
+                <div class="mb-6 transition-all hover:scale-110">
+                    <i class="fas fa-university text-teal-400 text-4xl mb-3"></i>
+                </div>
+                <p class="text-2xl font-bold text-teal-400 mb-4">STIKES KARYA HUSADA KEDIRI</p>
+                <p class="text-gray-300 mb-2">Jl. Soekarno Hatta No. 07 Pare, Kediri - Jawa Timur</p>
+                <p class="text-gray-300 mb-2">📞 (0354) 393888</p>
+                <p class="text-gray-300 mb-4">✉️ admin@stikes-khkediri.ac.id</p>
+                <div class="border-t border-gray-800 mt-6 pt-6 text-gray-500 text-sm">© 2026 RemajaSehat. All rights reserved.</div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ==================== HALAMAN MATERI (SAMA) ==================== -->
+    <div id="materiPage" style="display: none;">
+        <!-- Konten materi tetap sama seperti sebelumnya -->
+        <div class="bg-gray-50 min-h-screen py-8">
+            <div class="container mx-auto px-4 max-w-5xl">
+                <button onclick="showHomepage()" class="mb-6 text-teal-600 hover:text-teal-700 font-semibold flex items-center gap-2 transition-all hover:translate-x-[-5px]">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+                </button>
+                <div class="bg-white rounded-2xl p-8 mb-6 shadow-md text-center transition-all hover:shadow-xl">
+                    <div class="inline-block bg-teal-100 rounded-full px-4 py-1 text-sm text-teal-700 mb-4">
+                        🧠 Health Promotion Model (HPM)
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-3">
+                        Edukasi Kesehatan Remaja
+                    </h1>
+                    <p class="text-2xl md:text-3xl font-bold text-teal-600 mb-3">
+                        STIKES KARYA HUSADA KEDIRI
+                    </p>
+                    <p class="text-gray-500">
+                        Farida Hayati • Kharisma Jihan Fadhilah • Habib Ardiansa
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 mb-6 shadow-md transition-all hover:shadow-xl">
+                    <h2 class="text-2xl font-bold text-teal-700 mb-4">📊 Fakta Penting Remaja Sehat (Usia 10-19 Tahun)</h2>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-teal-50 p-4 rounded-xl text-center transition-all hover:scale-105 hover:shadow-md">
+                            <div class="text-3xl mb-2">🏃‍♂️</div>
+                            <p class="font-bold text-lg">60 menit</p>
+                            <p class="text-sm text-gray-600">Aktivitas fisik/hari</p>
+                            <span class="text-xs text-teal-600">(WHO)</span>
+                        </div>
+                        <div class="bg-teal-50 p-4 rounded-xl text-center transition-all hover:scale-105 hover:shadow-md">
+                            <div class="text-3xl mb-2">😴</div>
+                            <p class="font-bold text-lg">8-10 jam</p>
+                            <p class="text-sm text-gray-600">Tidur/hari</p>
+                            <span class="text-xs text-teal-600">(AAP)</span>
+                        </div>
+                        <div class="bg-teal-50 p-4 rounded-xl text-center transition-all hover:scale-105 hover:shadow-md">
+                            <div class="text-3xl mb-2">💧</div>
+                            <p class="font-bold text-lg">2 liter</p>
+                            <p class="text-sm text-gray-600">Air/hari</p>
+                            <span class="text-xs text-teal-600">(Kemenkes RI)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 mb-6 shadow-md transition-all hover:shadow-xl">
+                    <h2 class="text-2xl font-bold text-teal-700 mb-4">🍎 Pola Makan Seimbang (Kemenkes RI)</h2>
+                    <p class="text-gray-600 mb-4">Pola makan seimbang adalah susunan makanan sehari-hari yang mengandung zat gizi dalam jenis dan jumlah yang sesuai dengan kebutuhan tubuh.</p>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <p class="font-semibold text-teal-700 mb-2">Prinsip Utama:</p>
+                            <ul class="space-y-2 text-gray-600">
+                                <li class="transition-all hover:translate-x-2">✅ <span class="font-medium">Keanekaragaman:</span> 4-5 golongan makanan</li>
+                                <li class="transition-all hover:translate-x-2">✅ <span class="font-medium">Kecukupan:</span> Kebutuhan gizi harian terpenuhi</li>
+                                <li class="transition-all hover:translate-x-2">✅ <span class="font-medium">Frekuensi:</span> 3x makan utama + 2x selingan</li>
+                            </ul>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="text-center p-3 bg-teal-50 rounded-xl transition-all hover:scale-105 hover:bg-teal-100">🍚 Karbohidrat</div>
+                            <div class="text-center p-3 bg-teal-50 rounded-xl transition-all hover:scale-105 hover:bg-teal-100">🥬 Sayur & Buah</div>
+                            <div class="text-center p-3 bg-teal-50 rounded-xl transition-all hover:scale-105 hover:bg-teal-100">🐟 Protein</div>
+                            <div class="text-center p-3 bg-teal-50 rounded-xl transition-all hover:scale-105 hover:bg-teal-100">🥛 Susu/Lemak</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 mb-6 shadow-md transition-all hover:shadow-xl">
+                    <h2 class="text-2xl font-bold text-teal-700 mb-4">🏃‍♀️ Aktivitas Fisik 60 Menit/Hari (WHO)</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <ul class="space-y-2 text-gray-600 mb-4">
+                                <li>🏠 Aktivitas harian (nyapu, cuci piring)</li>
+                                <li>🚶 Latihan fisik (jumping jack, push-up)</li>
+                                <li>⚽ Olahraga (sepak bola, basket)</li>
+                            </ul>
+                            <div class="bg-red-50 p-4 rounded-xl border border-red-200">
+                                <p class="font-bold text-red-700">⚠️ Risiko Pola Hidup Tidak Sehat:</p>
+                                <div class="grid grid-cols-2 gap-1 text-sm mt-2 text-gray-600">
+                                    <span>📈 Obesitas</span> <span>🍬 Diabetes T2</span>
+                                    <span>🩸 Hipertensi</span> <span>❤️ Penyakit Jantung</span>
+                                    <span>🦴 Osteoporosis</span> <span>😔 Masalah Mental</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-center">
+                            <div class="w-40 h-40 bg-gradient-to-r from-teal-400 to-emerald-400 rounded-full flex items-center justify-center text-4xl font-bold text-white shadow-lg">60</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-2xl p-6 mb-6 shadow-md">
+                    <h2 class="text-2xl font-bold text-teal-700 mb-4">🧠 Health Promotion Model (Nola J. Pender)</h2>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-white p-4 rounded-xl shadow transition-all hover:shadow-lg hover:scale-105">
+                            <h4 class="font-bold text-teal-700">Persepsi Individu</h4>
+                            <p class="text-sm text-gray-600">Keyakinan tentang manfaat kesehatan</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow transition-all hover:shadow-lg hover:scale-105">
+                            <h4 class="font-bold text-teal-700">Dukungan Lingkungan</h4>
+                            <p class="text-sm text-gray-600">Teman, keluarga, fasilitas olahraga</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow transition-all hover:shadow-lg hover:scale-105">
+                            <h4 class="font-bold text-teal-700">Komitmen Tindakan</h4>
+                            <p class="text-sm text-gray-600">Rencana konkret + evaluasi rutin</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 mb-6 shadow-md transition-all hover:shadow-xl">
+                    <h2 class="text-2xl font-bold text-teal-700 mb-4">📈 Tahap Perkembangan Remaja</h2>
+                    <div class="space-y-3">
+                        <div class="border-l-8 border-teal-400 pl-4 py-2 bg-teal-50 rounded-r-xl transition-all hover:translate-x-2">
+                            <span class="font-bold">10-14 tahun</span>: Remaja Awal (fisik cepat tumbuh, cari identitas)
+                        </div>
+                        <div class="border-l-8 border-emerald-400 pl-4 py-2 bg-emerald-50 rounded-r-xl transition-all hover:translate-x-2">
+                            <span class="font-bold">14-17 tahun</span>: Remaja Madya (emosi labil, pengaruh teman kuat)
+                        </div>
+                        <div class="border-l-8 border-cyan-400 pl-4 py-2 bg-cyan-50 rounded-r-xl transition-all hover:translate-x-2">
+                            <span class="font-bold">17-20 tahun</span>: Remaja Akhir (matang emosi, rencana masa depan)
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="quizContainerMateri" class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-2xl p-6 mb-6 shadow-md">
+                    <h2 class="text-2xl font-bold text-teal-700 mb-2">📝 Kuis: Cek Kebiasaanmu!</h2>
+                    <p class="text-gray-600 mb-4">Pola makan • Aktivitas • Prioritas kesehatan</p>
+                    <div id="quizMateriContent"></div>
+                </div>
+                
+                <div class="bg-teal-50 rounded-2xl p-6 shadow-md text-center transition-all hover:shadow-xl">
+                    <i class="fas fa-heart text-teal-500 text-3xl mb-3 transition-all hover:scale-110"></i>
+                    <p class="text-gray-700">Dengan menerapkan pola hidup sehat, remaja dapat tumbuh optimal, terhindar dari berbagai penyakit, dan memiliki masa depan yang cerah.</p>
+                    <p class="font-semibold text-teal-700 mt-3">#RemajaSehat #GenerasiHebat #STIKESKaryaHusadaKediri</p>
+                </div>
+            </div>
+        </div>
+        <footer class="bg-gray-900 text-white py-12">
+            <div class="container mx-auto px-4 text-center">
+                <div class="mb-6"><i class="fas fa-university text-teal-400 text-4xl mb-3"></i></div>
+                <p class="text-2xl font-bold text-teal-400 mb-4">STIKES KARYA HUSADA KEDIRI</p>
+                <p class="text-gray-300 mb-2">Jl. Soekarno Hatta No. 07 Pare, Kediri - Jawa Timur</p>
+                <p class="text-gray-300 mb-2">📞 (0354) 393888</p>
+                <p class="text-gray-300 mb-4">✉️ admin@stikes-khkediri.ac.id</p>
+                <div class="border-t border-gray-800 mt-6 pt-6 text-gray-500 text-sm">© 2026 RemajaSehat. All rights reserved.</div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ==================== HALAMAN KUIS ==================== -->
+    <div id="quizPage" style="display: none;" class="bg-gray-50 min-h-screen py-8">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <button onclick="showHomepage()" class="mb-6 text-teal-600 hover:text-teal-700 font-semibold flex items-center gap-2 transition-all hover:translate-x-[-5px]">
+                <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+            </button>
+            <div class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-2xl p-8 shadow-md">
+                <h2 class="text-3xl font-bold text-teal-700 mb-2 text-center">📝 Kuis Gaya Hidup Sehat</h2>
+                <p class="text-gray-600 mb-6 text-center">Cek kebiasaan pola makan, aktivitas fisik, dan prioritas kesehatanmu!</p>
+                <div id="quizPageContent"></div>
+            </div>
+        </div>
+        <footer class="bg-gray-900 text-white py-12 mt-8">
+            <div class="container mx-auto px-4 text-center">
+                <div class="mb-6"><i class="fas fa-university text-teal-400 text-4xl mb-3"></i></div>
+                <p class="text-2xl font-bold text-teal-400 mb-4">STIKES KARYA HUSADA KEDIRI</p>
+                <p class="text-gray-300 mb-2">Jl. Soekarno Hatta No. 07 Pare, Kediri - Jawa Timur</p>
+                <p class="text-gray-300 mb-2">📞 (0354) 393888</p>
+                <p class="text-gray-300 mb-4">✉️ admin@stikes-khkediri.ac.id</p>
+                <div class="border-t border-gray-800 mt-6 pt-6 text-gray-500 text-sm">© 2026 RemajaSehat. All rights reserved.</div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ==================== HALAMAN KALKULATOR BMI ==================== -->
+    <div id="bmiPage" style="display: none;" class="bg-gray-50 min-h-screen py-8">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <button onclick="showHomepage()" class="mb-6 text-teal-600 hover:text-teal-700 font-semibold flex items-center gap-2 transition-all hover:translate-x-[-5px]">
+                <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+            </button>
+            <div class="bg-white rounded-2xl p-8 shadow-md transition-all hover:shadow-xl">
+                <div class="text-center mb-6">
+                    <div class="inline-block bg-teal-100 rounded-full px-4 py-1 text-sm text-teal-700 mb-4">🩺 Kalkulator Kesehatan</div>
+                    <h2 class="text-3xl font-bold text-teal-700 mb-2">Kalkulator BMI</h2>
+                    <p class="text-gray-600">Body Mass Index (Indeks Massa Tubuh)</p>
+                    <p class="text-sm text-gray-500 mt-2">Cek apakah berat badanmu ideal!</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-teal-700 mb-4 text-center">Masukkan Data Kamu</h3>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-semibold mb-2">📏 Tinggi Badan</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="tinggiBadan" placeholder="Contoh: 165" class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-teal-500 transition-all">
+                                <select id="satuanTinggi" class="p-3 border border-gray-300 rounded-xl bg-white focus:outline-none focus:border-teal-500 transition-all">
+                                    <option value="cm">cm</option>
+                                    <option value="m">m</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-semibold mb-2">⚖️ Berat Badan</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="beratBadan" placeholder="Contoh: 55" class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-teal-500 transition-all">
+                                <select id="satuanBerat" class="p-3 border border-gray-300 rounded-xl bg-white focus:outline-none focus:border-teal-500 transition-all">
+                                    <option value="kg">kg</option>
+                                    <option value="lb">lb</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button onclick="hitungBMI()" class="w-full bg-teal-600 text-white py-3 rounded-xl font-bold text-lg hover:bg-teal-700 transition-all shadow-md hover:shadow-xl hover:scale-105">
+                            Hitung BMI →
+                        </button>
+                    </div>
+                    <div class="bg-gray-50 rounded-2xl p-6 text-center">
+                        <h3 class="text-xl font-bold text-teal-700 mb-4">Hasil BMI Kamu</h3>
+                        <div id="hasilBMI" class="text-5xl font-bold text-gray-800 mb-3">-</div>
+                        <div id="statusBMI" class="text-lg font-semibold mb-4 text-gray-600">Belum dihitung</div>
+                        <div id="kategoriBMI" class="p-4 rounded-xl"></div>
+                    </div>
+                </div>
+                <div class="mt-8 bg-gray-50 rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-teal-700 mb-4 text-center">📋 Kategori BMI (WHO)</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center text-sm">
+                        <div class="p-3 bg-blue-100 rounded-xl transition-all hover:scale-105">📊 <span class="font-bold">Kurus</span><p class="text-xs">&lt; 18.5</p></div>
+                        <div class="p-3 bg-green-100 rounded-xl transition-all hover:scale-105">📊 <span class="font-bold">Normal</span><p class="text-xs">18.5 - 24.9</p></div>
+                        <div class="p-3 bg-yellow-100 rounded-xl transition-all hover:scale-105">📊 <span class="font-bold">Gemuk</span><p class="text-xs">25 - 29.9</p></div>
+                        <div class="p-3 bg-orange-100 rounded-xl transition-all hover:scale-105">📊 <span class="font-bold">Obesitas I</span><p class="text-xs">30 - 34.9</p></div>
+                        <div class="p-3 bg-red-100 rounded-xl transition-all hover:scale-105">📊 <span class="font-bold">Obesitas II</span><p class="text-xs">≥ 35</p></div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center mt-4">*BMI = Berat Badan (kg) / (Tinggi Badan (m)²)</p>
+                </div>
+            </div>
+        </div>
+        <footer class="bg-gray-900 text-white py-12 mt-8">
+            <div class="container mx-auto px-4 text-center">
+                <div class="mb-6"><i class="fas fa-university text-teal-400 text-4xl mb-3"></i></div>
+                <p class="text-2xl font-bold text-teal-400 mb-4">STIKES KARYA HUSADA KEDIRI</p>
+                <p class="text-gray-300 mb-2">Jl. Soekarno Hatta No. 07 Pare, Kediri - Jawa Timur</p>
+                <p class="text-gray-300 mb-2">📞 (0354) 393888</p>
+                <p class="text-gray-300 mb-4">✉️ admin@stikes-khkediri.ac.id</p>
+                <div class="border-t border-gray-800 mt-6 pt-6 text-gray-500 text-sm">© 2026 RemajaSehat. All rights reserved.</div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ==================== HALAMAN TENTANG ==================== -->
+    <div id="aboutPage" style="display: none;" class="bg-gray-50 min-h-screen py-8">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <button onclick="showHomepage()" class="mb-6 text-teal-600 hover:text-teal-700 font-semibold flex items-center gap-2 transition-all hover:translate-x-[-5px]">
+                <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+            </button>
+            <div class="bg-white rounded-2xl p-8 shadow-md transition-all hover:shadow-xl">
+                <h2 class="text-3xl font-bold text-teal-700 mb-4 text-center">Tentang RemajaSehat</h2>
+                <div class="prose max-w-none text-gray-600">
+                    <p class="mb-4">RemajaSehat adalah platform edukasi kesehatan digital yang berbasis pada <span class="font-semibold">Health Promotion Model (HPM) dari Nola J. Pender</span>, dirancang khusus untuk remaja Indonesia usia 13-19 tahun.</p>
+                    <p class="mb-4">Dikembangkan oleh <span class="font-semibold">Farida Hayati, S.Kp.,M.Kep. ,Kharisma Jihan Fadhilah, S.Kep.,Ners. Dan ,Habib Ardiansa, S.Kom.</span> dari <span class="font-semibold">STIKES KARYA HUSADA KEDIRI</span> sebagai bagian dari proyek pengabdian masyarakat dan promosi kesehatan.</p>
+                    <h3 class="text-xl font-bold text-teal-700 mt-6 mb-2">📌 Misi Kami</h3>
+                    <ul class="list-disc pl-5 mb-4">
+                        <li class="transition-all hover:translate-x-2">Meningkatkan literasi kesehatan remaja melalui konten berbasis bukti ilmiah.</li>
+                        <li class="transition-all hover:translate-x-2">Menyediakan alat bantu (kuis, kalkulator BMI) untuk penilaian mandiri.</li>
+                        <li class="transition-all hover:translate-x-2">Mendorong perilaku hidup bersih dan sehat (PHBS) di kalangan pelajar.</li>
+                    </ul>
+                    <h3 class="text-xl font-bold text-teal-700 mt-6 mb-2">📞 Kontak</h3>
+                    <p>Jl. Soekarno Hatta No. 07 Pare, Kediri - Jawa Timur</p>
+                    <p>📞 (0354) 393888</p>
+                    <p>✉️ admin@stikes-khkediri.ac.id</p>
+                </div>
+            </div>
+        </div>
+        <footer class="bg-gray-900 text-white py-12 mt-8">
+            <div class="container mx-auto px-4 text-center">
+                <div class="mb-6"><i class="fas fa-university text-teal-400 text-4xl mb-3"></i></div>
+                <p class="text-2xl font-bold text-teal-400 mb-4">STIKES KARYA HUSADA KEDIRI</p>
+                <p class="text-gray-300 mb-2">Jl. Soekarno Hatta No. 07 Pare, Kediri - Jawa Timur</p>
+                <p class="text-gray-300 mb-2">📞 (0354) 393888</p>
+                <p class="text-gray-300 mb-4">✉️ admin@stikes-khkediri.ac.id</p>
+                <div class="border-t border-gray-800 mt-6 pt-6 text-gray-500 text-sm">© 2026 RemajaSehat. All rights reserved.</div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const mobileBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        // HIDE LOADER AFTER PAGE LOAD
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(function() {
+                    document.getElementById('loader').style.display = 'none';
+                }, 500);
+            }, 500);
+        });
+        
+        // BACK TO TOP BUTTON
+        window.addEventListener('scroll', function() {
+            const backToTop = document.getElementById('backToTop');
+            if (window.scrollY > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+        
+        // SHOW TOAST FUNCTION
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // PARTICLE BACKGROUND
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            if (!particlesContainer) return;
+            
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 8 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.animationDuration = Math.random() * 5 + 5 + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        function closeMenu() {
+            mobileMenu.classList.add('hidden');
+            if (mobileBtn) {
+                mobileBtn.classList.remove('active');
+            }
+        }
+        
+        if (mobileBtn) {
+            mobileBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('mobile-menu-slide');
+                } else {
+                    mobileMenu.classList.remove('mobile-menu-slide');
+                }
+                mobileBtn.classList.toggle('active');
+            });
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        function showHomepage() {
+            showToast('🏠 Kembali ke Beranda');
+            document.getElementById('homepage').style.display = 'block';
+            document.getElementById('materiPage').style.display = 'none';
+            document.getElementById('quizPage').style.display = 'none';
+            document.getElementById('bmiPage').style.display = 'none';
+            document.getElementById('aboutPage').style.display = 'none';
+            scrollToTop();
+            closeMenu();
+        }
+
+        function showMateri() {
+            showToast('📚 Membuka halaman Materi');
+            document.getElementById('homepage').style.display = 'none';
+            document.getElementById('materiPage').style.display = 'block';
+            document.getElementById('quizPage').style.display = 'none';
+            document.getElementById('bmiPage').style.display = 'none';
+            document.getElementById('aboutPage').style.display = 'none';
+            renderQuiz('quizMateriContent');
+            scrollToTop();
+            closeMenu();
+        }
+
+        function showQuiz() {
+            showToast('❓ Yuk ikuti kuis!');
+            document.getElementById('homepage').style.display = 'none';
+            document.getElementById('materiPage').style.display = 'none';
+            document.getElementById('quizPage').style.display = 'block';
+            document.getElementById('bmiPage').style.display = 'none';
+            document.getElementById('aboutPage').style.display = 'none';
+            renderQuiz('quizPageContent');
+            scrollToTop();
+            closeMenu();
+        }
+
+        function showBMI() {
+            showToast('🩺 Cek BMI kamu sekarang!');
+            document.getElementById('homepage').style.display = 'none';
+            document.getElementById('materiPage').style.display = 'none';
+            document.getElementById('quizPage').style.display = 'none';
+            document.getElementById('bmiPage').style.display = 'block';
+            document.getElementById('aboutPage').style.display = 'none';
+            scrollToTop();
+            closeMenu();
+        }
+
+        function showAbout() {
+            showToast('ℹ️ Tentang RemajaSehat');
+            document.getElementById('homepage').style.display = 'none';
+            document.getElementById('materiPage').style.display = 'none';
+            document.getElementById('quizPage').style.display = 'none';
+            document.getElementById('bmiPage').style.display = 'none';
+            document.getElementById('aboutPage').style.display = 'block';
+            scrollToTop();
+            closeMenu();
+        }
+
+        function hitungBMI() {
+            let tinggi = parseFloat(document.getElementById('tinggiBadan').value);
+            let berat = parseFloat(document.getElementById('beratBadan').value);
+            let satuanTinggi = document.getElementById('satuanTinggi').value;
+            let satuanBerat = document.getElementById('satuanBerat').value;
+
+            if (isNaN(tinggi) || isNaN(berat) || tinggi <= 0 || berat <= 0) {
+                showToast('⚠️ Masukkan data yang valid!');
+                return;
+            }
+
+            if (satuanTinggi === 'cm') tinggi = tinggi / 100;
+            if (satuanBerat === 'lb') berat = berat * 0.453592;
+
+            let bmi = berat / (tinggi * tinggi);
+            bmi = Math.round(bmi * 10) / 10;
+
+            let status = '', kategori = '', warna = '';
+
+            if (bmi < 18.5) {
+                status = 'Underweight (Kurus)';
+                kategori = '⚠️ Kamu tergolong kurus. Disarankan untuk menambah asupan nutrisi.';
+                warna = 'bg-blue-100 text-blue-800';
+            } else if (bmi >= 18.5 && bmi <= 24.9) {
+                status = 'Normal (Ideal)';
+                kategori = '✅ Selamat! Berat badanmu ideal. Pertahankan!';
+                warna = 'bg-green-100 text-green-800';
+            } else if (bmi >= 25 && bmi <= 29.9) {
+                status = 'Overweight (Gemuk)';
+                kategori = '⚠️ Kamu tergolong gemuk. Mulai kurangi makanan berlemak.';
+                warna = 'bg-yellow-100 text-yellow-800';
+            } else if (bmi >= 30 && bmi <= 34.9) {
+                status = 'Obesitas I';
+                kategori = '⚠️⚠️ Kamu memasuki tahap obesitas. Konsultasi ke dokter.';
+                warna = 'bg-orange-100 text-orange-800';
+            } else {
+                status = 'Obesitas II';
+                kategori = '⚠️⚠️⚠️ Obesitas tingkat lanjut. Segera konsultasi ke dokter.';
+                warna = 'bg-red-100 text-red-800';
+            }
+
+            document.getElementById('hasilBMI').innerHTML = bmi;
+            document.getElementById('statusBMI').innerHTML = status;
+            document.getElementById('kategoriBMI').innerHTML = `<div class="p-4 rounded-xl ${warna} transition-all">${kategori}</div>`;
+            showToast('✅ BMI berhasil dihitung!');
+        }
+
+        const questions = [
+            { text: "Seberapa sering kamu makan 3x sehari + 2 selingan?", options: ["Selalu", "Sering", "Jarang", "Tidak pernah"] },
+            { text: "Berapa menit kamu berolahraga per hari?", options: ["60+ menit", "30-60 menit", "<30 menit", "Tidak pernah"] },
+            { text: "Seberapa penting kesehatan bagimu?", options: ["Sangat penting", "Cukup penting", "Kurang penting", "Tidak peduli"] }
+        ];
+
+        let currentStep = 0;
+        let answers = [];
+        let activeQuizContainer = null;
+
+        function renderQuiz(containerId) {
+            activeQuizContainer = containerId;
+            const quizContent = document.getElementById(containerId);
+            if (!quizContent) return;
+            
+            if (currentStep < questions.length) {
+                const q = questions[currentStep];
+                let html = `<div class="mb-4"><div class="bg-gray-200 rounded-full h-2 mb-4"><div class="bg-gradient-to-r from-teal-400 to-emerald-400 h-2 rounded-full transition-all" style="width: ${((currentStep + 1) / questions.length) * 100}%"></div></div><p class="text-sm text-gray-600 mb-2">Langkah ${currentStep + 1} dari ${questions.length}</p><p class="text-xl font-bold text-gray-800 mb-4">${q.text}</p><div class="space-y-3">`;
+                q.options.forEach(opt => {
+                    html += `<button onclick="answerQuiz('${opt}')" class="w-full text-left p-3 bg-white rounded-xl border border-gray-200 hover:border-teal-400 hover:bg-teal-50 transition-all hover:translate-x-2">${opt}</button>`;
+                });
+                html += `</div></div>`;
+                quizContent.innerHTML = html;
+            } else {
+                let score = 0;
+                if (answers[0] === "Selalu") score += 0;
+                else if (answers[0] === "Sering") score += 1;
+                else if (answers[0] === "Jarang") score += 2;
+                else score += 3;
+                if (answers[1] === "60+ menit") score += 0;
+                else if (answers[1] === "30-60 menit") score += 1;
+                else if (answers[1] === "<30 menit") score += 2;
+                else score += 3;
+                if (answers[2] === "Sangat penting") score += 0;
+                else if (answers[2] === "Cukup penting") score += 1;
+                else if (answers[2] === "Kurang penting") score += 2;
+                else score += 3;
+                
+                let resultText = "", resultColor = "", rekomendasi = "";
+                if (score <= 2) {
+                    resultText = "🌟 Luar biasa! Kebiasaan sehatmu sudah sangat baik!";
+                    rekomendasi = "Pertahankan pola makan dan aktivitas fisikmu!";
+                    resultColor = "from-teal-400 to-teal-500";
+                } else if (score <= 5) {
+                    resultText = "👍 Cukup baik! Kamu sudah di jalur yang benar!";
+                    rekomendasi = "Tingkatkan lagi frekuensi makan teratur dan olahraga!";
+                    resultColor = "from-emerald-400 to-emerald-500";
+                } else {
+                    resultText = "🌱 Mulai perbaiki dari sekarang!";
+                    rekomendasi = "Yuk biasakan makan 3x sehari dan mulai gerak aktif!";
+                    resultColor = "from-cyan-400 to-cyan-500";
+                }
+                quizContent.innerHTML = `<div class="text-center p-6 bg-gradient-to-r ${resultColor} text-white rounded-2xl transition-all"><h3 class="text-2xl font-bold mb-3">Hasil Kuis</h3><p class="text-lg mb-2">${resultText}</p><p class="text-md mb-4 opacity-95">${rekomendasi}</p><button onclick="resetQuiz()" class="bg-white text-teal-600 px-6 py-2 rounded-xl font-bold hover:bg-gray-100 transition-all hover:scale-105">Ulangi Kuis</button></div>`;
+                showToast('🎉 Kuis selesai! Lihat hasilnya');
+            }
+        }
+
+        function answerQuiz(answer) {
+            answers.push(answer);
+            currentStep++;
+            if (activeQuizContainer) renderQuiz(activeQuizContainer);
+        }
+
+        function resetQuiz() {
+            currentStep = 0;
+            answers = [];
+            if (activeQuizContainer) renderQuiz(activeQuizContainer);
+            showToast('🔄 Kuis diulang');
+        }
+
+        // INITIALIZE
+        createParticles();
+        showHomepage();
+    </script>
+</body>
+</html>
